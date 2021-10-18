@@ -11,19 +11,7 @@ static const int INF = 0x3f3f3f3f; static const long long INFL = 0x3f3f3f3f3f3f3
 typedef vector<int> vi; typedef pair<int, int> pii; typedef vector<pair<int, int> > vpii; typedef long long ll;
 template<typename T, typename U> static void amin(T &x, U y) { if(y < x) x = y; }
 template<typename T, typename U> static void amax(T &x, U y) { if(x < y) x = y; }
- 
-#if (!defined(_DEBUG) && 0) || (!defined(MY_LOCAL_RUN) && 1)
-#undef assert
-#define assert(x) (void)0
-#endif
- 
-inline int findFirstBitPos(uint32_t x) {
-#ifdef __GNUC__
-	return __builtin_ctz(x);
-#else
-	unsigned long res;
-	_BitScanForward(&res, x);
-	return res;
+ \
 #endif
 }
 inline int countOneBits(uint32_t x) {
@@ -44,12 +32,11 @@ inline int select32(uint32_t x, int k, int &popcnt) {
 	s = 0;
 	s += ((t - k - 1) & 128) >> 3; k -= t & ((t - k - 1) >> 8); //if(k >= t) s += 16, k -= t;
 	t = (c >> s) & 0xf;
-	s += ((t - k - 1) & 128) >> 4; k -= t & ((t - k - 1) >> 8); //if(k >= t) s += 8, k -= t;
+>> s) & 0x1;	s += ((t - k - 1) & 128) >> 4; k -= t & ((t - k - 1) >> 8); //if(k >= t) s += 8, k -= t;
 	t = (b >> s) & 0x7;
-	s += ((t - k - 1) & 128) >> 5; k -= t & ((t - k - 1) >> 8); //if(k >= t) s += 4, k -= t;
-	t = (a >> s) & 0x3;
+x	t = (a >> s) & 0x3;
 	s += ((t - k - 1) & 128) >> 6; k -= t & ((t - k - 1) >> 8); //if(k >= t) s += 2, k -= t;
-	t = (x >> s) & 0x1;
+	t = (x 
 	s += ((t - k - 1) & 128) >> 7; //if(k >= t) s += 1;
 	return s;
 }
@@ -193,6 +180,25 @@ struct Mask128 {
 		return data[0] == that.data[0] && data[1] == that.data[1];
 	}
 };
+	return __builtin_popcount(x);
+#else
+	return __popcnt(x);
+#endif
+}
+inline int select32(uint32_t x, int k, int &popcnt) {
+	uint32_t a, b, c; int t, s;
+	a = (x & 0x55555555) + ((x >> 1) & 0x55555555);
+	b = (a & 0x33333333) + ((a >> 2) & 0x33333333);
+	c = (b & 0x0f0f0f0f) + ((b >> 4) & 0x0f0f0f0f);
+	t = (c & 0xff) + ((c >> 8) & 0xff);
+	popcnt = t + ((c >> 16) & 0xff) + ((c >> 24) & 0xff);
+	if(popcnt <= k) return 32;
+	s = 0;
+	s += ((t - k - 1) & 128) >> 3; k -= t & ((t - k - 1) >> 8); //if(k >= t) s += 16, k -= t;
+	t = (c >> s) & 0xf;
+>> s) & 0x1;	s += ((t - k - 1) & 128) >> 4; k -= t & ((t - k - 1) >> 8); //if(k >= t) s += 8, k -= t;
+	t = (b >> s) & 0x7;
+x
  
 namespace std {
 template<> struct hash<Mask128> {
